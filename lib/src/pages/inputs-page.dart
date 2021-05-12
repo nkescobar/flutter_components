@@ -12,6 +12,15 @@ class _InputPageState extends State<InputPage> {
   String _email = '';
   String _password = '';
   String _fechaNacimiento = '';
+  String _opcionSeleccionada = null;
+  List<String> _poderes = [
+    'Volar',
+    'Rayos x',
+    'Super aliento',
+    'Super fuerza',
+  ];
+
+  TextEditingController _inputFieldDateController = new TextEditingController();
 
   @override
   void initState() {
@@ -42,8 +51,17 @@ class _InputPageState extends State<InputPage> {
   }
 
   void _setFechaNacimiento(String value) {
+    print('value $value');
     setState(() {
       _fechaNacimiento = value;
+      _inputFieldDateController.text = _fechaNacimiento;
+    });
+  }
+
+  void _setDropdown(String value) {
+    setState(() {
+      print('value----> $value');
+      _opcionSeleccionada = value;
     });
   }
 
@@ -74,6 +92,13 @@ class _InputPageState extends State<InputPage> {
           TextFieldFechaNacimientoWidget(
             fechaNacimiento: _fechaNacimiento,
             onChanged: _setFechaNacimiento,
+            inputFieldDateController: _inputFieldDateController,
+          ),
+          Divider(),
+          DropdownWidget(
+            opcionSeleccionada: _opcionSeleccionada,
+            onChanged: _setDropdown,
+            poderes: _poderes,
           ),
           Divider(),
           CrearPersona(_nombre, _email),
@@ -179,11 +204,13 @@ class TextFieldPasswordWidget extends StatelessWidget {
 class TextFieldFechaNacimientoWidget extends StatelessWidget {
   final Function(String) onChanged;
   final String fechaNacimiento;
+  final TextEditingController inputFieldDateController;
 
   const TextFieldFechaNacimientoWidget({
     Key key,
     @required this.fechaNacimiento,
     @required this.onChanged,
+    @required this.inputFieldDateController,
   }) : super(key: key);
 
   @override
@@ -191,6 +218,7 @@ class TextFieldFechaNacimientoWidget extends StatelessWidget {
     return TextField(
       // autofocus: true,
       enableInteractiveSelection: false,
+      controller: inputFieldDateController,
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
         _selectDate(context);
@@ -206,12 +234,69 @@ class TextFieldFechaNacimientoWidget extends StatelessWidget {
 
   _selectDate(BuildContext context) async {
     DateTime picked = await showDatePicker(
-      context: context,
-      initialDate: new DateTime.now(),
-      firstDate: new DateTime(2018),
-      lastDate: new DateTime(2025),
-    );
+        context: context,
+        initialDate: new DateTime.now(),
+        firstDate: new DateTime(2018),
+        lastDate: new DateTime(2025),
+        locale: Locale('es', 'CO'));
 
-    if (picked != null) {}
+    if (picked != null) {
+      this.onChanged(picked.toString());
+    }
+  }
+}
+
+class DropdownWidget extends StatelessWidget {
+  final Function(String) onChanged;
+  final String opcionSeleccionada;
+  final List<String> poderes;
+  const DropdownWidget({
+    Key key,
+    @required this.opcionSeleccionada,
+    @required this.onChanged,
+    @required this.poderes,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(Icons.select_all),
+        SizedBox(
+          width: 30.0,
+        ),
+        Expanded(
+          child: DropdownButton(
+              style: TextStyle(color: Colors.black),
+              underline: Container(
+                height: 1,
+                color: Colors.black87,
+              ),
+              iconSize: 24,
+              elevation: 16,
+              isExpanded: true,
+              hint: opcionSeleccionada != null
+                  ? null
+                  : Text(
+                      'Seleccione un poder',
+                      style: TextStyle(color: Colors.black38),
+                    ),
+              value: opcionSeleccionada,
+              items: getOpcionesDropdown(),
+              onChanged: (opt) => this.onChanged(opt)),
+        ),
+      ],
+    );
+  }
+
+  List<DropdownMenuItem<String>> getOpcionesDropdown() {
+    List<DropdownMenuItem<String>> lista = new List();
+    poderes.forEach((poder) {
+      lista.add(DropdownMenuItem(
+        child: Text(poder),
+        value: poder,
+      ));
+    });
+    return lista;
   }
 }

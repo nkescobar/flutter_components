@@ -5,6 +5,8 @@ import 'package:flutter_componentes/src/pages/avatar_oage.dart';
 import 'package:flutter_componentes/src/pages/card_pages.dart';
 import 'package:flutter_componentes/src/pages/home_page.dart';
 import 'package:flutter_componentes/src/pages/inputs-page.dart';
+import 'package:flutter_componentes/src/pages/listview_page.dart';
+import 'package:flutter_componentes/src/pages/slider_pages.dart';
 
 Map<String, WidgetBuilder> getApplicationRoutes() {
   return <String, WidgetBuilder>{
@@ -14,5 +16,7 @@ Map<String, WidgetBuilder> getApplicationRoutes() {
     'card': (BuildContext context) => CardPage(),
     'animatedContainer': (BuildContext context) => AnimatedPage(),
     'inputs': (BuildContext context) => InputPage(),
+    'slider': (BuildContext context) => SliderPage(),
+    'list': (BuildContext context) => ListPage(),
   };
 }
